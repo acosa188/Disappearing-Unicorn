@@ -37,6 +37,13 @@ class ViewController: UIViewController {
         pointsLabel.isHidden = true;
         gameButtons = [goodButton, badButton];
         setupFreshGameState();
+        
+        let gameData = GameData()
+        
+        if(gameData.playerData(forName: defaults.string(forKey: "playerName") ?? "DefaultPlayer") != nil){
+          playerInfo = gameData.playerData(forName: defaults.string(forKey: "playerName") ?? "DefaultPlayer")!
+        }
+        
         configureDefaults();
         
         
@@ -52,9 +59,7 @@ class ViewController: UIViewController {
     //configurables
     func configureDefaults(){
         
-        let gameData = GameData()
         
-        playerInfo = gameData.playerData(forName: defaults.string(forKey: "playerName") ?? "DefaultPlayer")
         
         if(defaults.bool(forKey: "bgSwitchState"))
         {
@@ -69,7 +74,7 @@ class ViewController: UIViewController {
         //if defaults are not set, set it to 0.1s
         if(intervals == 0.0)	
         {
-            intervals  = 0.1
+            intervals  = 1.0
         }
         
     }

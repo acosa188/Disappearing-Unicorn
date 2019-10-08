@@ -24,11 +24,11 @@ class SettingViewController: UIViewController, UINavigationControllerDelegate, U
     
     var playerInfo: PlayerData?
     let defaults = UserDefaults.standard
-    let gameData = GameData()
+    var gameData : GameData?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        gameData = GameData()
         if let playerInfo = playerInfo{
             playerPhoto.image = playerInfo.photo
             playerName.text = playerInfo.name
@@ -145,21 +145,22 @@ class SettingViewController: UIViewController, UINavigationControllerDelegate, U
         //Set color last picked color segment
         colorSegment.selectedSegmentIndex = defaults.integer(forKey: "colorSegmentIndex")
         
-        //Set last set gamespeed
-        gameSpeedLabel.text = "\(defaults.float(forKey: "gameSpeed") == 0.0 ? "0.1" : String(format: "%.2f",defaults.float(forKey: "gameSpeed")))s / Round"
-        
         //Slider config
         gameSpeedSlider.minimumValue = 0.1
         gameSpeedSlider.maximumValue = 5.0
         gameSpeedSlider.setValue(defaults.float(forKey: "gameSpeed"), animated: false)
-        defaults.set(gameSpeedSlider.value, forKey: "gameSpeed")
+        //If user has cached value, do that else set the default speed to 1 second
+        gameSpeedSlider.value = defaults.float(forKey: "gameSpeed") > 0.0 ? defaults.float(forKey: "gameSpeed") : 1.0
+        
+        //Set last set gamespeed
+        gameSpeedLabel.text = "\(defaults.float(forKey: "gameSpeed") == 0.0 ? "1.0" : String(format: "%.2f",defaults.float(forKey: "gameSpeed")))s / Round"
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         if let image = info[UIImagePickerControllerOriginalImage] as? UIImage
         {
-            gameData.updateProPic(for: self.playerInfo!.name, photo: image)
-            playerInfo?.photo = image
+            gameData?.updateProPic(for: self.playerInfo!.name, photo: image)
+            self.playerInfo?.photo = image
             playerPhoto.image = image
             
         }
